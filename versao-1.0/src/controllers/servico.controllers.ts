@@ -2,11 +2,22 @@
 //Kenzo
 import type express from "express"
 import * as ServicoService from "../services/servico.service.js"
+import * as auditoriaService from "../services/auditoria.service.js"
+import { getUsuario } from "../middlewares/usuario.header.js"
 
 //Criar Servico
 export async function createServico(req: express.Request, res: express.Response) {
   const { tipo,data,prazo,garantia,clienteId } = req.body
   const servico = await ServicoService.createServico({ tipo,data,prazo,garantia,clienteId })
+
+  await auditoriaService.registrarAuditoria({
+    usuario: getUsuario(req),
+    acao: "CRIAR",
+    entidade: "Servico",
+    entidadeId: servico.id,
+    detalhes: `Servico ${tipo} criado para o cliente ${clienteId}`
+  })
+
   res.status(201).json(servico)
 }
 
@@ -41,6 +52,14 @@ export async function updateServico(req: express.Request, res: express.Response)
     return res.status(404).json({ message: "servico not found" })
   }
 
+  await auditoriaService.registrarAuditoria({
+    usuario: getUsuario(req),
+    acao: "ALTERAR",
+    entidade: "Servico",
+    entidadeId: Number(id),
+    detalhes: `Servico ${id} alterado`
+  })
+
   return res.status(200).json(servico)
 }
 
@@ -51,6 +70,14 @@ export async function deleteServico(req: express.Request, res: express.Response)
   if (result === null) {
     return res.status(404).json({ message: "Servico not found" })
   }
+
+  await auditoriaService.registrarAuditoria({
+    usuario: getUsuario(req),
+    acao: "EXCLUIR",
+    entidade: "Servico",
+    entidadeId: Number(id),
+    detalhes: `Servico ${id} excluido`
+  })
 
   return res.status(204).send()
 }
