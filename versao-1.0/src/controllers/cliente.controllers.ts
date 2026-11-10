@@ -52,6 +52,14 @@ export async function updateUser(req: express.Request, res: express.Response) {
     return res.status(404).json({ message: "User not found" })
   }
 
+  await auditoriaService.registrarAuditoria({
+    usuario: getUsuario(req),
+    acao: "ALTERAR",
+    entidade: "Cliente",
+    entidadeId: Number(id),
+    detalhes: `Cliente ${id} alterado`
+  })
+
   return res.status(200).json(user)
 }
 
@@ -62,6 +70,14 @@ export async function deleteUser(req: express.Request, res: express.Response) {
   if (result === null) {
     return res.status(404).json({ message: "User not found" })
   }
+
+  await auditoriaService.registrarAuditoria({
+    usuario: getUsuario(req),
+    acao: "EXCLUIR",
+    entidade: "Cliente",
+    entidadeId: Number(id),
+    detalhes: `Cliente ${id} excluido`
+  })
 
   return res.status(204).send()
 }
