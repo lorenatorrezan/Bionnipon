@@ -3,6 +3,7 @@ import express from "express"
 
 import clienteRoutes from "./routes/cliente.routes.js"
 import servicoRoutes from "./routes/servico.routes.js"
+import auditoriaRoutes from "./routes/auditoria.routes.js"
 
 import cors from 'cors';
 
@@ -10,6 +11,7 @@ const app = express()
 app.use(express.json())
 app.use(clienteRoutes)
 app.use(servicoRoutes)
+app.use(auditoriaRoutes)
 
 app.use(cors({
   origin: 'http://localhost:5500', 
