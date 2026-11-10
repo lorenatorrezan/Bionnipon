@@ -24,3 +24,12 @@ model Servico {
   clienteId   Int
   cliente     Cliente  @relation(fields: [clienteId], references: [id])
 }
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  criadoEm   DateTime @default(now())
+  usuario    String
+  acao       String
+  entidade   String
+  entidadeId Int?
+  detalhes   String?
+}
